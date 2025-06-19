@@ -1,25 +1,21 @@
-Commands to start
-minukube start --cpus 2
-commands to check: kubectl get all / kubectl get ns / help version --help / k9s --help
+# Commands to start
+    minukube start --cpus 2
+    commands to check: kubectl get all / kubectl get ns / help version --help / k9s --help
 
-Install kafka
-helm repo add bitnami https://charts.bitnami.com/bitnami
+# Install kafka
+    helm repo add bitnami https://charts.bitnami.com/bitnami
+    
+    helm install kafka-local bitnami/kafka \
+    --set persistence.enabled=false,zookeeper.persistence.enabled=false
 
-kubectl create namespace orders-microservice
+    kubectl run kafka-local-client \
+        --restart='Never' \
+        --image docker.io/bitnami/kafka:3.3.1-debian-11-r19 \
+        --namespace orders-microservice \
+        --command \
+        -- sleep infinity
 
-kubectl config set-context --current --namespace orders-microservice
-
-helm install kafka-local bitnami/kafka \
---set persistence.enabled=false,zookeeper.persistence.enabled=false
-
-kubectl run kafka-local-client \
-    --restart='Never' \
-    --image docker.io/bitnami/kafka:3.3.1-debian-11-r19 \
-    --namespace orders-microservice \
-    --command \
-    -- sleep infinity
-
-kubectl exec --tty -i kafka-local-client --namespace orders-microservice -- bash
+    Do this for every service: kubectl exec --tty -i kafka-local-client --namespace orders-microservice -- bash
 
 
 Commands
